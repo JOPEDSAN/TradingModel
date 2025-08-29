@@ -1,0 +1,52 @@
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Entornos virtuales
+venv/
+ENV/
+env/
+
+# Archivos de Jupyter Notebook
+.ipynb_checkpoints
+
+# Archivos de configuración IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Archivos de datos
+data/*.csv
+data/*.pkl
+models/*.pkl
+*.h5
+
+# Logs
+logs/
+*.log
+
+# Resultados de análisis
+results/
+plots/
+
+# Configuración local
+.env
