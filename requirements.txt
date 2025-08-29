@@ -9,3 +9,4 @@ statsmodels
 joblib
 tqdm
 pandas-datareader
+TA-Lib
