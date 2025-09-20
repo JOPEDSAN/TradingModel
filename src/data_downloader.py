@@ -129,7 +129,7 @@ def main():
     
     # Define el rango de fechas (5 años de datos)
     end_date = datetime.now().strftime('%Y-%m-%d')
-    start_date = (datetime.now() - timedelta(days=365 * 5)).strftime('%Y-%m-%d')
+    start_date = (datetime.now() - timedelta(days=365 * 20)).strftime('%Y-%m-%d')
     
     # Descarga los datos
     data_dict = download_multiple_stocks(tickers, start_date, end_date)
