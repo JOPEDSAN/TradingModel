@@ -14,6 +14,9 @@ import glob
 from sklearn.preprocessing import MinMaxScaler
 import joblib
 
+# Importar utilidades para datos económicos y noticias
+from .utils.data_utils import merge_economic_data, merge_news_sentiment
+
 # Configurar logging
 logging.basicConfig(
     level=logging.INFO,
@@ -51,12 +54,15 @@ def load_data(data_dir='data'):
     
     return all_data
 
-def calculate_features(df):
+def calculate_features(df, economic_data=None, sentiment_data=None, ticker=None):
     """
     Calcula características técnicas adicionales para los datos.
     
     Args:
         df (pandas.DataFrame): DataFrame con los datos históricos.
+        economic_data (pandas.DataFrame, optional): Datos económicos.
+        sentiment_data (pandas.DataFrame, optional): Datos de sentimiento de noticias.
+        ticker (str, optional): Símbolo del ticker (necesario si se proporcionan datos de sentimiento).
         
     Returns:
         pandas.DataFrame: DataFrame con las características adicionales.
@@ -121,17 +127,29 @@ def calculate_features(df):
     data['volume_sma_10'] = data['Volume'].rolling(window=10).mean()
     data['volume_ratio'] = data['Volume'] / data['volume_sma_5']
     
+    # Fusionar con datos económicos si están disponibles
+    if economic_data is not None:
+        logger.info("Fusionando datos económicos...")
+        data = merge_economic_data(data, economic_data)
+    
+    # Fusionar con datos de sentimiento si están disponibles
+    if sentiment_data is not None and ticker is not None:
+        logger.info(f"Fusionando datos de sentimiento para {ticker}...")
+        data = merge_news_sentiment(data, sentiment_data, ticker)
+    
     # Limpiar NaN
     data = data.dropna()
     
     return data
 
-def create_features_for_all(data_dict):
+def create_features_for_all(data_dict, economic_data=None, sentiment_data=None):
     """
     Calcula características para todos los tickers.
     
     Args:
         data_dict (dict): Diccionario con los DataFrames de cada ticker.
+        economic_data (pandas.DataFrame, optional): Datos económicos.
+        sentiment_data (pandas.DataFrame, optional): Datos de sentimiento de noticias.
         
     Returns:
         dict: Diccionario con los DataFrames procesados.
@@ -140,7 +158,7 @@ def create_features_for_all(data_dict):
     
     for ticker, data in data_dict.items():
         try:
-            processed = calculate_features(data)
+            processed = calculate_features(data, economic_data, sentiment_data, ticker)
             processed_data[ticker] = processed
             logger.info(f"Características calculadas para {ticker}: {len(processed)} filas")
         except Exception as e:
@@ -247,8 +265,26 @@ def main():
     # Cargar los datos
     data_dict = load_data()
     
+    # Intentar cargar datos económicos
+    economic_data = None
+    try:
+        if os.path.exists('data/economic_indicators.csv'):
+            logger.info("Cargando datos económicos...")
+            economic_data = pd.read_csv('data/economic_indicators.csv', index_col=0)
+    except Exception as e:
+        logger.error(f"Error al cargar datos económicos: {str(e)}")
+    
+    # Intentar cargar datos de sentimiento de noticias
+    sentiment_data = None
+    try:
+        if os.path.exists('data/news_sentiment_daily.csv'):
+            logger.info("Cargando datos de sentimiento de noticias...")
+            sentiment_data = pd.read_csv('data/news_sentiment_daily.csv')
+    except Exception as e:
+        logger.error(f"Error al cargar datos de sentimiento: {str(e)}")
+    
     # Calcular características
-    processed_data = create_features_for_all(data_dict)
+    processed_data = create_features_for_all(data_dict, economic_data, sentiment_data)
     
     # Guardar los datos procesados
     for ticker, data in processed_data.items():

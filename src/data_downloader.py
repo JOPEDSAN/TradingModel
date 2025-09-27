@@ -127,7 +127,7 @@ def main():
         "VTI",    # Vanguard Total Stock Market ETF
     ]
     
-    # Define el rango de fechas (5 años de datos)
+    # Define el rango de fechas (20 años de datos)
     end_date = datetime.now().strftime('%Y-%m-%d')
     start_date = (datetime.now() - timedelta(days=365 * 20)).strftime('%Y-%m-%d')
     

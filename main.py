@@ -87,6 +87,26 @@ def main():
         data_dict = download_multiple_stocks(args.tickers, start_date, end_date)
         save_data(data_dict)
         
+        # Descargar datos económicos
+        logger.info("Iniciando descarga de datos macroeconómicos...")
+        try:
+            from src.economic_data import get_economic_indicators, save_economic_data
+            economic_data = get_economic_indicators(start_date, end_date)
+            if economic_data is not None:
+                save_economic_data(economic_data)
+        except Exception as e:
+            logger.error(f"Error al descargar datos económicos: {str(e)}")
+        
+        # Descargar y analizar noticias (solo último mes debido a limitaciones de API)
+        logger.info("Iniciando descarga y análisis de noticias...")
+        try:
+            from src.news_analyzer import FinancialNewsAnalyzer
+            news_start = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+            analyzer = FinancialNewsAnalyzer()
+            analyzer.process_multiple_tickers(args.tickers, news_start, end_date)
+        except Exception as e:
+            logger.error(f"Error al procesar noticias: {str(e)}")
+        
         logger.info("Descarga de datos completada.")
     
     # 2. Procesamiento de datos
@@ -97,8 +117,28 @@ def main():
         # Cargar datos
         data_dict = load_data()
         
-        # Calcular características
-        processed_data = create_features_for_all(data_dict)
+        # Cargar datos económicos si existen
+        economic_data = None
+        try:
+            if os.path.exists('data/economic_indicators.csv'):
+                import pandas as pd
+                logger.info("Cargando datos económicos...")
+                economic_data = pd.read_csv('data/economic_indicators.csv', index_col=0)
+        except Exception as e:
+            logger.error(f"Error al cargar datos económicos: {str(e)}")
+        
+        # Cargar datos de sentimiento de noticias si existen
+        sentiment_data = None
+        try:
+            if os.path.exists('data/news_sentiment_daily.csv'):
+                import pandas as pd
+                logger.info("Cargando datos de sentimiento de noticias...")
+                sentiment_data = pd.read_csv('data/news_sentiment_daily.csv')
+        except Exception as e:
+            logger.error(f"Error al cargar datos de sentimiento: {str(e)}")
+        
+        # Calcular características incluyendo datos económicos y de noticias
+        processed_data = create_features_for_all(data_dict, economic_data, sentiment_data)
         
         # Guardar datos procesados
         for ticker, data in processed_data.items():

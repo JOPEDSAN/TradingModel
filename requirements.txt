@@ -9,4 +9,16 @@ statsmodels
 joblib
 tqdm
 pandas-datareader
+newspaper3k
+textblob
+vaderSentiment
+nltk
+fredapi
+python-dotenv
+requests
 TA-Lib
+finnhub-python
+alpha_vantage
+newsapi-python
+plotly
+dash
