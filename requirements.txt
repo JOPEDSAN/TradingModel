@@ -1,6 +1,6 @@
 # Trading Model v0.1.0 - Requirements
 # Autor: José Francisco Pedrero Sánchez
-# Email: jopedsan@ib.org
+# Email: jopedsan@ibv.org
 
 # ===== DEPENDENCIAS CRÍTICAS =====
 # Análisis de datos y matemáticas
