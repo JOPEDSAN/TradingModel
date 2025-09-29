@@ -9,7 +9,7 @@ Información del Proyecto:
 Nombre: Trading model
 Versión: 0.1.0
 Autor: José Francisco Pedrero Sánchez
-Email: jopedsan@ib.org
+Email: jopedsan@ibv.org
 Descripción: Modelo para trading incluyendo datos macroeconómicos y análisis de noticias.
 
 Script para verificar e instalar dependencias del proyecto de predicción de inversiones.
@@ -26,7 +26,7 @@ PROJECT_INFO = {
     "name": "Trading model",
     "version": "0.1.0",
     "author": "José Francisco Pedrero Sánchez",
-    "email": "jopedsan@ib.org",
+    "email": "jopedsan@ibv.org",
     "description": "Modelo para trading incluyendo datos macroeconómicos y análisis de noticias."
 }
 

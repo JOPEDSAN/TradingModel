@@ -3,7 +3,7 @@
 **Modelo para trading incluyendo datos macroeconómicos y análisis de noticias**
 
 - 👨‍💻 **Autor:** José Francisco Pedrero Sánchez
-- 📧 **Email:** jopedsan@ib.org
+- 📧 **Email:** jopedsan@ibv.org
 - 🔢 **Versión:** 0.1.0
 
 Este proyecto implementa un sistema avanzado de predicción para trading basado en datos históricos de Yahoo Finance, indicadores macroeconómicos y análisis de sentimiento de noticias, utilizando modelos de aprendizaje profundo con series temporales.
