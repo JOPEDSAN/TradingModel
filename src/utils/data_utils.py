@@ -47,8 +47,8 @@ def merge_economic_data(df, economic_data, date_column='date'):
     merged = dates_df.join(economic_daily, how='left')
     
     # Rellenar valores faltantes
-    merged.fillna(method='ffill', inplace=True)
-    merged.fillna(method='bfill', inplace=True)
+    merged = merged.ffill()  # Reemplaza fillna(method='ffill')
+    merged = merged.bfill()  # Reemplaza fillna(method='bfill')
     
     # Resetear el índice
     merged.reset_index(inplace=True)

@@ -292,26 +292,28 @@ class StockPredictor:
         
         # Invertir la normalización para obtener los precios reales
         # Crear un array con ceros en todas las columnas excepto la de cierre
-        dummy = np.zeros((len(y_test), len(self.feature_cols)))
-        dummy[:, self.close_idx] = self.y_test.flatten()
+        dummy_test = np.zeros((len(self.y_test), len(self.feature_cols)))
+        dummy_test[:, self.close_idx] = self.y_test.flatten()
         # Invertir la normalización
-        y_test_inv = self.scaler.inverse_transform(dummy)[:, self.close_idx]
+        y_test_inv = self.scaler.inverse_transform(dummy_test)[:, self.close_idx]
         
         # Hacer lo mismo para las predicciones
-        dummy = np.zeros((len(y_pred), len(self.feature_cols)))
-        dummy[:, self.close_idx] = y_pred.flatten()
-        y_pred_inv = self.scaler.inverse_transform(dummy)[:, self.close_idx]
+        dummy_pred = np.zeros((len(y_pred), len(self.feature_cols)))
+        dummy_pred[:, self.close_idx] = y_pred.flatten()
+        y_pred_inv = self.scaler.inverse_transform(dummy_pred)[:, self.close_idx]
         
         # Crear un DataFrame con las fechas, valores reales y predicciones
         try:
             dates_test = np.load(f"data/{self.ticker}_dates_test.npy", allow_pickle=True)
             df_pred = pd.DataFrame({
-                'Date': dates_test,
+                'Date': dates_test[:len(y_test_inv)],
                 'Real': y_test_inv,
                 'Predicción': y_pred_inv
             })
         except:
+            # Si no hay fechas guardadas, usar índices
             df_pred = pd.DataFrame({
+                'Index': range(len(y_test_inv)),
                 'Real': y_test_inv,
                 'Predicción': y_pred_inv
             })

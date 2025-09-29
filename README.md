@@ -1,6 +1,23 @@
-# Proyecto de Predicción de Inversiones
+# Trading Model
+
+**Modelo para trading incluyendo datos macroeconómicos y análisis de noticias**
+
+- 👨‍💻 **Autor:** José Francisco Pedrero Sánchez
+- 📧 **Email:** jopedsan@ib.org
+- 🔢 **Versión:** 0.1.0
 
 Este proyecto implementa un sistema avanzado de predicción para trading basado en datos históricos de Yahoo Finance, indicadores macroeconómicos y análisis de sentimiento de noticias, utilizando modelos de aprendizaje profundo con series temporales.
+
+## 🚀 Mejoras Implementadas (v2.0)
+
+- ✅ **Validaciones robustas** de datos y configuración
+- ✅ **Manejo mejorado de errores** con logging detallado  
+- ✅ **Script de setup automático** para dependencias
+- ✅ **Configuración centralizada** en `config.py`
+- ✅ **Utilidades de validación** para verificar integridad del proyecto
+- ✅ **Compatibilidad mejorada** con versiones recientes de pandas
+- ✅ **Manejo seguro de fechas** y secuencias temporales
+- ✅ **Documentación expandida** con ejemplos prácticos
 
 ## Características
 
@@ -47,17 +64,33 @@ prediccion_inversiones/
 └── README.md              # Documentación del proyecto
 ```
 
-## Requisitos
+## 📋 Requisitos del Sistema
 
-- Python 3.8+
+### Requisitos Mínimos
+- **Python:** 3.8 o superior
+- **RAM:** 4GB mínimo, 8GB recomendado
+- **Espacio en disco:** 2GB para datos y modelos
+- **Conexión a internet:** Para descarga de datos financieros
+
+### Gestión de Entornos
+Se **recomienda encarecidamente** usar un entorno virtual:
+- **Conda** (recomendado): `conda create -n trading_model python=3.11.11`
+- **venv**: `python -m venv trading_env`
+
+### Dependencias Principales
+Las siguientes librerías se instalan automáticamente con `setup.py`:
+
+**Críticas (instalación automática):**
 - pandas, numpy, matplotlib, seaborn, scikit-learn
-- yfinance, pandas-datareader (datos financieros)
-- tensorflow, keras (modelos de deep learning)
-- TA-Lib (indicadores técnicos)
-- fredapi, requests (datos económicos)
-- newspaper3k, textblob, vaderSentiment, nltk (análisis de noticias)
-- python-dotenv (gestión de variables de entorno)
-- finnhub-python, alpha_vantage, newsapi-python (APIs financieras adicionales)
+- yfinance (datos financieros)
+- tensorflow (modelos de deep learning)
+- textblob, vaderSentiment, nltk (análisis de sentimiento)
+- joblib, tqdm, requests, python-dotenv
+
+**Opcionales (funcionalidades adicionales):**
+- fredapi, finnhub-python, alpha_vantage, newsapi-python (APIs)
+- TA-Lib (indicadores técnicos avanzados)
+- plotly, dash (visualizaciones interactivas)
 
 ## Variables de Entorno
 
@@ -72,28 +105,85 @@ ALPHAVANTAGE_API_KEY=tu_clave_api_alphavantage
 
 > Nota: Puedes obtener estas claves API gratuitas registrándote en sus respectivos sitios web.
 
-## Instalación
+## 🚀 Inicio Rápido
 
-1. Clona este repositorio:
+### Opción 1: Setup con Conda (Recomendado)
+
+1. **Crea y activa un entorno conda:**
 ```bash
-git clone https://github.com/tu-usuario/prediccion_inversiones.git
+conda create -n trading_model python=3.11.11
+conda activate trading_model
+```
+
+2. **Descarga o crea los archivos del proyecto:**
+```bash
+# Si tienes el código fuente, navega a la carpeta del proyecto
 cd prediccion_inversiones
+
+# O crea una nueva carpeta para el proyecto
+mkdir trading_model
+cd trading_model
 ```
 
-2. Instala las dependencias:
+3. **Ejecuta el setup automático:**
 ```bash
-pip install -r requirements.txt
+python setup.py
 ```
+Este script verificará e instalará automáticamente todas las dependencias necesarias usando pip dentro del entorno conda.
 
-## Uso
-
-### Pipeline Completo
-
-Para ejecutar el pipeline completo (descarga, procesamiento, entrenamiento y predicción):
-
+4. **Configura las claves API (opcional):**
 ```bash
-python main.py --all --tickers AAPL MSFT GOOGL AMZN --years 20
+# Copia el archivo de ejemplo y edítalo con tus claves
+copy .env.example .env
+# Edita .env con tus claves API
 ```
+
+5. **Ejecuta el pipeline completo:**
+```bash
+python main.py --all --tickers AAPL MSFT GOOGL
+```
+
+### Opción 2: Setup con pip (Alternativo)
+
+1. **Crea un entorno virtual:**
+```bash
+python -m venv trading_env
+# En Windows:
+trading_env\Scripts\activate
+# En Linux/Mac:
+source trading_env/bin/activate
+```
+
+2. **Navega al directorio del proyecto y ejecuta setup:**
+```bash
+cd prediccion_inversiones
+python setup.py
+```
+
+3. **Verifica la instalación:**
+```bash
+python validate.py --tickers AAPL MSFT
+```
+
+### ⚠️ Nota Importante
+- **Siempre usa un entorno virtual** (conda o venv) para evitar conflictos de dependencias
+- **El setup.py instalará automáticamente** todas las dependencias necesarias
+- **Las claves API son opcionales** pero recomendadas para funcionalidad completa
+
+## 💻 Uso del Sistema
+
+### 🚀 Ejecución Rápida (Pipeline Completo)
+
+**Para usuarios que quieren resultados inmediatos:**
+```bash
+# Activar el entorno conda
+conda activate trading_model
+
+# Ejecutar pipeline completo con tickers populares
+python main.py --all --tickers AAPL MSFT GOOGL --years 3
+```
+
+### 📊 Ejecución Paso a Paso
 
 ### Descarga de Datos
 
@@ -216,14 +306,27 @@ python main.py --predict --future-days 30
 - Interfaz web para visualización de resultados en tiempo real
 - Backtesting de estrategias
 
-## Contribución
+## 🤝 Contribución
 
-Las contribuciones son bienvenidas. Para cambios importantes, por favor abre primero un issue para discutir lo que te gustaría cambiar.
+Las contribuciones son bienvenidas. Para cambios importantes, por favor contacta al autor antes de realizar modificaciones.
 
-## Licencia
+**Contacto del Autor:**
+- 👨‍💻 José Francisco Pedrero Sánchez
+- 📧 jopedsan@ib.org
+
+## 📄 Licencia
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
-## Descargo de Responsabilidad
+## ⚠️ Descargo de Responsabilidad
 
-Este proyecto es solo para fines educativos y de investigación. No constituye asesoramiento financiero. Invertir en mercados financieros conlleva riesgos, y las decisiones de inversión deben tomarse bajo tu propia responsabilidad.
+Este proyecto es solo para fines educativos y de investigación. **No constituye asesoramiento financiero**. Invertir en mercados financieros conlleva riesgos, y las decisiones de inversión deben tomarse bajo tu propia responsabilidad y con el debido asesoramiento profesional.
+
+---
+
+### 📞 Soporte y Contacto
+
+Para preguntas, problemas o sugerencias sobre Trading Model v0.1.0:
+- 📧 **Email:** jopedsan@ib.org
+- 🐛 **Reportar bugs:** Contacta directamente por email
+- 💡 **Sugerencias:** Todas las ideas de mejora son bienvenidas

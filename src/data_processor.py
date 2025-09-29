@@ -177,8 +177,14 @@ def create_sequences(data, sequence_length=60, prediction_horizon=1, target_col=
         target_col (str): Columna objetivo para la predicción.
         
     Returns:
-        tuple: X (secuencias de entrada), y (valores objetivo)
+        tuple: X (secuencias de entrada), y (valores objetivo), scaler, feature_cols
     """
+    if data.empty:
+        raise ValueError("El DataFrame está vacío")
+    
+    if len(data) < sequence_length + prediction_horizon:
+        raise ValueError(f"Datos insuficientes. Se necesitan al menos {sequence_length + prediction_horizon} filas")
+    
     X, y = [], []
     
     # Seleccionar todas las columnas numéricas para las características
@@ -186,6 +192,21 @@ def create_sequences(data, sequence_length=60, prediction_horizon=1, target_col=
     
     # Eliminar 'date' y 'ticker' si existen en feature_cols
     feature_cols = [col for col in feature_cols if col not in ['date', 'ticker']]
+    
+    if target_col not in feature_cols:
+        raise ValueError(f"La columna objetivo '{target_col}' no se encontró en los datos")
+    
+    # Verificar que no hay valores infinitos o NaN
+    data_numeric = data[feature_cols]
+    if data_numeric.isnull().any().any():
+        logger.warning("Se encontraron valores NaN en los datos. Eliminando filas con NaN...")
+        data_numeric = data_numeric.dropna()
+        data = data.loc[data_numeric.index]
+    
+    if np.isinf(data_numeric.values).any():
+        logger.warning("Se encontraron valores infinitos en los datos. Reemplazando por NaN y eliminando...")
+        data_numeric = data_numeric.replace([np.inf, -np.inf], np.nan).dropna()
+        data = data.loc[data_numeric.index]
     
     # Convertir DataFrame a numpy array
     data_array = data[feature_cols].values
@@ -201,6 +222,9 @@ def create_sequences(data, sequence_length=60, prediction_horizon=1, target_col=
     for i in range(len(data_scaled) - sequence_length - prediction_horizon + 1):
         X.append(data_scaled[i:(i + sequence_length)])
         y.append(data_scaled[i + sequence_length + prediction_horizon - 1, target_idx])
+    
+    if len(X) == 0:
+        raise ValueError("No se pudieron crear secuencias con los parámetros dados")
     
     return np.array(X), np.array(y), scaler, feature_cols
 
@@ -237,6 +261,12 @@ def prepare_dataset(processed_data, sequence_length=60, prediction_horizon=1, ta
             X_train, X_test = X[:train_size], X[train_size:]
             y_train, y_test = y[:train_size], y[train_size:]
             
+            # Calcular los índices correctos para las fechas
+            train_dates_start = sequence_length
+            train_dates_end = train_size + sequence_length
+            test_dates_start = train_size + sequence_length
+            test_dates_end = min(len(data), test_dates_start + len(X_test))
+            
             prepared_data[ticker] = {
                 'X_train': X_train,
                 'y_train': y_train,
@@ -244,8 +274,8 @@ def prepare_dataset(processed_data, sequence_length=60, prediction_horizon=1, ta
                 'y_test': y_test,
                 'scaler': scaler,
                 'feature_cols': feature_cols,
-                'dates_train': data['date'].iloc[sequence_length:train_size + sequence_length].values,
-                'dates_test': data['date'].iloc[train_size + sequence_length:train_size + sequence_length + len(X_test)].values
+                'dates_train': data['date'].iloc[train_dates_start:train_dates_end].values,
+                'dates_test': data['date'].iloc[test_dates_start:test_dates_end].values
             }
             
             logger.info(f"Datos preparados para {ticker}: {len(X_train)} ejemplos de entrenamiento, {len(X_test)} ejemplos de prueba")
@@ -255,6 +285,10 @@ def prepare_dataset(processed_data, sequence_length=60, prediction_horizon=1, ta
             np.save(f"data/{ticker}_y_train.npy", y_train)
             np.save(f"data/{ticker}_X_test.npy", X_test)
             np.save(f"data/{ticker}_y_test.npy", y_test)
+            
+            # Guardar también las fechas
+            np.save(f"data/{ticker}_dates_train.npy", prepared_data[ticker]['dates_train'])
+            np.save(f"data/{ticker}_dates_test.npy", prepared_data[ticker]['dates_test'])
             
         except Exception as e:
             logger.error(f"Error al preparar los datos para {ticker}: {str(e)}")

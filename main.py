@@ -6,9 +6,23 @@ Script principal para ejecutar el pipeline completo de predicción de inversione
 """
 
 import os
+import sys
 import argparse
 import logging
 from datetime import datetime, timedelta
+import traceback
+
+# Importar configuración
+try:
+    from config import (
+        MODEL_CONFIG, DATA_CONFIG, API_CONFIG, FILE_CONFIG, 
+        DEFAULT_TICKERS, AVAILABLE_MODELS, LOGGING_CONFIG,
+        validate_config, print_config
+    )
+except ImportError:
+    print("ERROR: No se pudo importar el archivo de configuración. Usando configuración por defecto.")
+    DEFAULT_TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "TSLA"]
+    AVAILABLE_MODELS = ['lstm', 'gru', 'bilstm']
 
 # Configurar logging
 logging.basicConfig(
@@ -46,29 +60,45 @@ def parse_args():
     return parser.parse_args()
 
 def main():
-    args = parse_args()
-    
-    # Tickers por defecto si no se especifican
-    if args.tickers is None:
-        args.tickers = [
-            # Índices principales
-            "^GSPC",  # S&P 500
-            "^DJI",   # Dow Jones
-            "^IXIC",  # NASDAQ
-            
-            # Grandes tecnológicas
-            "AAPL",   # Apple
-            "MSFT",   # Microsoft
-            "GOOGL",  # Alphabet (Google)
-            "AMZN",   # Amazon
-            "META",   # Meta (Facebook)
-            "TSLA",   # Tesla
-        ]
-    
-    # Crear directorios si no existen
-    for directory in ['data', 'models', 'results', 'plots']:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
+    try:
+        # Validar configuración
+        config_messages = validate_config()
+        for message in config_messages:
+            if message.startswith("ERROR"):
+                logger.error(message)
+                return 1
+            elif message.startswith("WARNING"):
+                logger.warning(message)
+            else:
+                logger.info(message)
+        
+        # Mostrar configuración
+        print_config()
+        
+        args = parse_args()
+        
+        # Tickers por defecto si no se especifican
+        if args.tickers is None:
+            args.tickers = DEFAULT_TICKERS
+        
+        # Validar modelos
+        invalid_models = [m for m in args.models if m not in AVAILABLE_MODELS]
+        if invalid_models:
+            logger.error(f"Modelos no válidos: {invalid_models}. Modelos disponibles: {AVAILABLE_MODELS}")
+            return 1
+        
+        # Crear directorios si no existen
+        directories = [FILE_CONFIG.data_dir, FILE_CONFIG.models_dir, 
+                      FILE_CONFIG.results_dir, FILE_CONFIG.plots_dir]
+        for directory in directories:
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+                logger.info(f"Directorio creado: {directory}")
+        
+    except Exception as e:
+        logger.error(f"Error en la inicialización: {str(e)}")
+        logger.error(traceback.format_exc())
+        return 1
     
     # Ejecutar pipeline completo si se indica --all
     if args.all:
@@ -182,6 +212,8 @@ def main():
         logger.info("Predicciones completadas.")
     
     logger.info("Pipeline de predicción de inversiones completado.")
+    return 0
 
 if __name__ == "__main__":
-    main()
+    exit_code = main()
+    sys.exit(exit_code)
