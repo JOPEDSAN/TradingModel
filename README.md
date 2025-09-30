@@ -179,37 +179,108 @@ python validate.py --tickers AAPL MSFT
 # Activar el entorno conda
 conda activate trading_model
 
-# Ejecutar pipeline completo con tickers populares
-python main.py --all --tickers AAPL MSFT GOOGL --years 3
+# Opción 1: Usar índices bursátiles principales (recomendado para principiantes)
+python main.py --all --indices --years 3
+
+# Opción 2: Usar acciones tecnológicas principales
+python main.py --all --stocks --years 3
+
+# Opción 3: Combinar índices y ETFs
+python main.py --all --indices --etfs --years 3
+
+# Opción 4: Especificar tickers específicos
+python main.py --all --tickers ^GSPC ^DJI AAPL MSFT --years 3
+```
+
+### 🎯 Selección de Activos
+
+**Trading Model** permite analizar diferentes tipos de activos financieros:
+
+#### **📈 Índices Bursátiles (--indices)**
+```bash
+python main.py --download --indices
+# Incluye: S&P 500, Dow Jones, NASDAQ, Russell 2000, VIX, FTSE, DAX, CAC 40, Nikkei 225, Hang Seng
+```
+
+#### **🏢 Acciones Individuales (--stocks)**
+```bash
+python main.py --download --stocks
+# Incluye: FAANG, Microsoft, Tesla, NVIDIA, bancos principales, y otras empresas destacadas
+```
+
+#### **📊 ETFs (--etfs)**
+```bash
+python main.py --download --etfs
+# Incluye: SPY, QQQ, VTI, fondos sectoriales, bonos, oro, mercados internacionales
+```
+
+#### **₿ Criptomonedas (--crypto)**
+```bash
+python main.py --download --crypto
+# Incluye: Bitcoin, Ethereum, principales altcoins (a través de Yahoo Finance)
+```
+
+#### **🥇 Materias Primas (--commodities)**
+```bash
+python main.py --download --commodities
+# Incluye: Oro, petróleo, gas natural, cobre, productos agrícolas
+```
+
+#### **🎛️ Combinaciones Personalizadas**
+```bash
+# Análisis diversificado (índices + ETFs + algunas acciones)
+python main.py --all --indices --etfs --tickers AAPL TSLA BTC-USD
+
+# Análisis de materias primas y criptomonedas
+python main.py --all --commodities --crypto --years 2
+
+# Solo tickers específicos
+python main.py --all --tickers ^GSPC QQQ GLD BTC-USD CL=F
 ```
 
 ### 📊 Ejecución Paso a Paso
 
-### Descarga de Datos
+#### **1. Descarga de Datos**
 
-Para descargar solo datos históricos, económicos y noticias:
-
+**Descargar índices bursátiles principales:**
 ```bash
-python main.py --download --tickers AAPL MSFT GOOGL AMZN --years 20
+python main.py --download --indices --years 5
 ```
 
-### Procesamiento de Datos
+**Descargar diferentes tipos de activos:**
+```bash
+# Solo acciones tecnológicas
+python main.py --download --stocks --years 3
 
-Para procesar los datos descargados:
+# ETFs y materias primas
+python main.py --download --etfs --commodities --years 5
 
+# Criptomonedas (datos más limitados)
+python main.py --download --crypto --years 2
+
+# Combinación personalizada
+python main.py --download --tickers ^GSPC SPY AAPL BTC-USD GC=F --years 5
+```
+
+#### **2. Procesamiento de Datos**
+
+**Procesar todos los datos descargados:**
 ```bash
 python main.py --process
 ```
 
-### Entrenamiento de Modelos
+#### **3. Entrenamiento de Modelos**
 
-Para entrenar los modelos con los datos procesados:
-
+**Entrenar modelos para activos específicos:**
 ```bash
-python main.py --train --models lstm gru bilstm
+# Entrenar para índices principales
+python main.py --train --indices --models lstm gru
+
+# Entrenar para tickers específicos
+python main.py --train --tickers ^GSPC SPY AAPL --models bilstm
 ```
 
-### Predicción
+#### **4. Predicciones**
 
 Para generar predicciones con los modelos entrenados:
 
@@ -270,14 +341,69 @@ Predicciones:
 python main.py --predict --future-days 30
 ```
 
-### Parámetros
+### 🛠️ Parámetros Disponibles
 
-- `--tickers`: Lista de tickers a procesar (por defecto incluye índices principales y grandes tecnológicas)
-- `--models`: Tipos de modelos a entrenar (`lstm`, `gru`, `bilstm`)
-- `--years`: Años de datos históricos a descargar
-- `--seq-length`: Longitud de la secuencia para los modelos
-- `--horizon`: Horizonte de predicción (días en el futuro)
-- `--future-days`: Días futuros a predecir
+#### **Selección de Activos:**
+- `--indices`: Índices bursátiles principales (S&P 500, Dow Jones, NASDAQ, etc.)
+- `--stocks`: Acciones individuales (FAANG, tecnológicas, financieras)
+- `--etfs`: ETFs principales (SPY, QQQ, sectoriales, internacionales)
+- `--crypto`: Criptomonedas (Bitcoin, Ethereum, altcoins principales)
+- `--commodities`: Materias primas (oro, petróleo, productos agrícolas)
+- `--tickers`: Lista específica de tickers (ej: `AAPL MSFT ^GSPC`)
+
+#### **Configuración de Modelos:**
+- `--models`: Tipos de modelos (`lstm`, `gru`, `bilstm`)
+- `--years`: Años de datos históricos (por defecto: 5)
+- `--seq-length`: Longitud de secuencia (por defecto: 60)
+- `--horizon`: Horizonte de predicción en días (por defecto: 1)
+- `--future-days`: Días futuros a predecir (por defecto: 30)
+
+### 💡 Ejemplos Prácticos
+
+#### **Análisis de Mercado General:**
+```bash
+# Análisis completo de índices principales (recomendado para principiantes)
+python main.py --all --indices --years 3
+
+# Monitoreo de volatilidad del mercado
+python main.py --all --tickers ^GSPC ^VIX --years 2 --future-days 7
+```
+
+#### **Trading de Acciones Tecnológicas:**
+```bash
+# Análisis de las Big Tech
+python main.py --all --tickers AAPL MSFT GOOGL AMZN META --years 5
+
+# Comparación entre acciones tech y ETF tecnológico
+python main.py --all --tickers AAPL MSFT NVDA QQQ XLK --years 3
+```
+
+#### **Diversificación de Portafolio:**
+```bash
+# Análisis diversificado: acciones, bonos, oro, petróleo
+python main.py --all --tickers SPY TLT GLD CL=F --years 5
+
+# ETFs sectoriales para diversificación
+python main.py --all --tickers XLF XLK XLE XLV XLI --years 3
+```
+
+#### **Trading de Criptomonedas:**
+```bash
+# Principales criptomonedas
+python main.py --all --crypto --years 2 --future-days 14
+
+# Bitcoin vs mercado tradicional
+python main.py --all --tickers BTC-USD ^GSPC GLD --years 3
+```
+
+#### **Análisis de Materias Primas:**
+```bash
+# Oro, petróleo y productos agrícolas
+python main.py --all --commodities --years 5
+
+# Correlación entre inflación y materias primas
+python main.py --all --tickers GC=F CL=F DJP TIP --years 3
+```
 
 ## Indicadores Técnicos Implementados
 

@@ -50,21 +50,24 @@ class FileConfig:
     results_dir: str = "results"
     logs_dir: str = "logs"
 
-# Tickers por defecto
+# Tickers por defecto (índices principales)
 DEFAULT_TICKERS = [
-    # Índices principales
     "^GSPC",  # S&P 500
-    "^DJI",   # Dow Jones
-    "^IXIC",  # NASDAQ
-    
-    # Grandes tecnológicas
-    "AAPL",   # Apple
-    "MSFT",   # Microsoft
-    "GOOGL",  # Alphabet (Google)
-    "AMZN",   # Amazon
-    "META",   # Meta (Facebook)
-    "TSLA",   # Tesla
+    "^DJI",   # Dow Jones Industrial Average
+    "^IXIC",  # NASDAQ Composite
+    "^RUT",   # Russell 2000
+    "^VIX",   # CBOE Volatility Index
 ]
+
+# Configuración de selección de activos
+ASSET_SELECTION_CONFIG = {
+    'default_category': 'indices',
+    'max_tickers_per_run': 20,  # Límite para evitar sobrecarga
+    'min_tickers_for_training': 1,
+    'preferred_indices': ["^GSPC", "^DJI", "^IXIC"],
+    'preferred_stocks': ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA"],
+    'preferred_etfs': ["SPY", "QQQ", "VTI"]
+}
 
 # Tipos de modelos disponibles
 AVAILABLE_MODELS = ['lstm', 'gru', 'bilstm']

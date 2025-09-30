@@ -36,17 +36,239 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+def get_asset_groups():
+    """
+    Define los grupos de activos disponibles para análisis.
+    
+    Returns:
+        dict: Diccionario con diferentes categorías de activos
+    """
+    return {
+        'indices': {
+            'description': 'Índices bursátiles principales',
+            'tickers': [
+                "^GSPC",   # S&P 500
+                "^DJI",    # Dow Jones Industrial Average
+                "^IXIC",   # NASDAQ Composite
+                "^RUT",    # Russell 2000
+                "^VIX",    # CBOE Volatility Index
+                "^FTSE",   # FTSE 100 (Reino Unido)
+                "^GDAXI",  # DAX (Alemania)
+                "^FCHI",   # CAC 40 (Francia)
+                "^N225",   # Nikkei 225 (Japón)
+                "^HSI",    # Hang Seng (Hong Kong)
+            ]
+        },
+        'stocks': {
+            'description': 'Acciones individuales principales',
+            'tickers': [
+                # FAANG + Microsoft
+                "AAPL",    # Apple
+                "AMZN",    # Amazon
+                "META",    # Meta (Facebook)
+                "NFLX",    # Netflix
+                "GOOGL",   # Alphabet (Google)
+                "MSFT",    # Microsoft
+                
+                # Otras tecnológicas importantes
+                "TSLA",    # Tesla
+                "NVDA",    # NVIDIA
+                "AMD",     # Advanced Micro Devices
+                "INTC",    # Intel
+                
+                # Financieras
+                "JPM",     # JPMorgan Chase
+                "BAC",     # Bank of America
+                "WFC",     # Wells Fargo
+                
+                # Otros sectores
+                "JNJ",     # Johnson & Johnson
+                "PG",      # Procter & Gamble
+                "KO",      # Coca-Cola
+            ]
+        },
+        'etfs': {
+            'description': 'ETFs principales',
+            'tickers': [
+                "SPY",     # SPDR S&P 500 ETF
+                "QQQ",     # Invesco QQQ (NASDAQ-100)
+                "VTI",     # Vanguard Total Stock Market ETF
+                "IWM",     # iShares Russell 2000 ETF
+                "EFA",     # iShares MSCI EAFE ETF (Internacional)
+                "EEM",     # iShares MSCI Emerging Markets ETF
+                "GLD",     # SPDR Gold Shares
+                "TLT",     # iShares 20+ Year Treasury Bond ETF
+                "HYG",     # iShares iBoxx High Yield Corporate Bond ETF
+                "XLF",     # Financial Select Sector SPDR Fund
+                "XLK",     # Technology Select Sector SPDR Fund
+                "XLE",     # Energy Select Sector SPDR Fund
+            ]
+        },
+        'crypto': {
+            'description': 'Criptomonedas principales (a través de Yahoo Finance)',
+            'tickers': [
+                "BTC-USD", # Bitcoin
+                "ETH-USD", # Ethereum
+                "BNB-USD", # Binance Coin
+                "ADA-USD", # Cardano
+                "XRP-USD", # XRP
+                "SOL-USD", # Solana
+                "DOGE-USD",# Dogecoin
+                "DOT-USD", # Polkadot
+                "AVAX-USD",# Avalanche
+                "MATIC-USD",# Polygon
+            ]
+        },
+        'commodities': {
+            'description': 'Materias primas y futuros',
+            'tickers': [
+                "GC=F",    # Gold Futures
+                "SI=F",    # Silver Futures
+                "CL=F",    # Crude Oil Futures
+                "NG=F",    # Natural Gas Futures
+                "HG=F",    # Copper Futures
+                "ZC=F",    # Corn Futures
+                "ZW=F",    # Wheat Futures
+                "ZS=F",    # Soybean Futures
+                "KC=F",    # Coffee Futures
+                "CT=F",    # Cotton Futures
+            ]
+        }
+    }
+
+def select_tickers(args):
+    """
+    Selecciona los tickers basándose en los argumentos proporcionados.
+    
+    Args:
+        args: Argumentos de línea de comandos
+        
+    Returns:
+        list: Lista de tickers seleccionados
+    """
+    asset_groups = get_asset_groups()
+    selected_tickers = []
+    
+    # Si se especificaron tickers específicos, usarlos
+    if args.tickers:
+        return args.tickers
+    
+    # Recopilar tickers según las opciones seleccionadas
+    if args.indices:
+        selected_tickers.extend(asset_groups['indices']['tickers'])
+        logger.info(f"Añadidos {len(asset_groups['indices']['tickers'])} índices bursátiles")
+    
+    if args.stocks:
+        selected_tickers.extend(asset_groups['stocks']['tickers'])
+        logger.info(f"Añadidas {len(asset_groups['stocks']['tickers'])} acciones individuales")
+    
+    if args.etfs:
+        selected_tickers.extend(asset_groups['etfs']['tickers'])
+        logger.info(f"Añadidos {len(asset_groups['etfs']['tickers'])} ETFs")
+    
+    if args.crypto:
+        selected_tickers.extend(asset_groups['crypto']['tickers'])
+        logger.info(f"Añadidas {len(asset_groups['crypto']['tickers'])} criptomonedas")
+    
+    if args.commodities:
+        selected_tickers.extend(asset_groups['commodities']['tickers'])
+        logger.info(f"Añadidas {len(asset_groups['commodities']['tickers'])} materias primas")
+    
+    # Si no se seleccionó nada, usar índices principales por defecto
+    if not selected_tickers:
+        selected_tickers = asset_groups['indices']['tickers'][:5]  # Top 5 índices
+        logger.info("No se especificaron activos. Usando índices principales por defecto.")
+    
+    # Eliminar duplicados manteniendo el orden
+    seen = set()
+    unique_tickers = []
+    for ticker in selected_tickers:
+        if ticker not in seen:
+            seen.add(ticker)
+            unique_tickers.append(ticker)
+    
+    # Aplicar límite máximo para evitar sobrecarga
+    try:
+        from config import ASSET_SELECTION_CONFIG
+        max_tickers = ASSET_SELECTION_CONFIG.get('max_tickers_per_run', 20)
+        if len(unique_tickers) > max_tickers:
+            logger.warning(f"Se han seleccionado {len(unique_tickers)} activos, limitando a {max_tickers} para evitar sobrecarga")
+            unique_tickers = unique_tickers[:max_tickers]
+    except ImportError:
+        # Si no se puede importar config, usar límite por defecto
+        if len(unique_tickers) > 20:
+            logger.warning(f"Limitando a 20 activos para evitar sobrecarga")
+            unique_tickers = unique_tickers[:20]
+    
+    return unique_tickers
+
+def print_selected_assets(tickers):
+    """
+    Muestra información sobre los activos seleccionados.
+    
+    Args:
+        tickers (list): Lista de tickers seleccionados
+    """
+    asset_groups = get_asset_groups()
+    
+    print(f"\n📊 ACTIVOS SELECCIONADOS ({len(tickers)} en total):")
+    print("=" * 50)
+    
+    # Categorizar los tickers seleccionados
+    categorized = {category: [] for category in asset_groups.keys()}
+    uncategorized = []
+    
+    for ticker in tickers:
+        found = False
+        for category, group in asset_groups.items():
+            if ticker in group['tickers']:
+                categorized[category].append(ticker)
+                found = True
+                break
+        if not found:
+            uncategorized.append(ticker)
+    
+    # Mostrar por categorías
+    for category, group_tickers in categorized.items():
+        if group_tickers:
+            category_name = asset_groups[category]['description']
+            print(f"\n🏷️  {category_name.upper()}:")
+            for ticker in group_tickers:
+                print(f"   • {ticker}")
+    
+    if uncategorized:
+        print(f"\n🔍 OTROS:")
+        for ticker in uncategorized:
+            print(f"   • {ticker}")
+    
+    print("=" * 50)
+
 def parse_args():
     """Parsea los argumentos de línea de comandos."""
-    parser = argparse.ArgumentParser(description='Pipeline de predicción de inversiones')
+    parser = argparse.ArgumentParser(description='Trading Model - Pipeline de predicción de inversiones')
     
+    # Acciones del pipeline
     parser.add_argument('--download', action='store_true', help='Descargar datos históricos')
     parser.add_argument('--process', action='store_true', help='Procesar datos y calcular características')
     parser.add_argument('--train', action='store_true', help='Entrenar modelos')
     parser.add_argument('--predict', action='store_true', help='Hacer predicciones')
     parser.add_argument('--all', action='store_true', help='Ejecutar todo el pipeline')
     
-    parser.add_argument('--tickers', nargs='+', default=None, help='Lista de tickers a procesar')
+    # Selección de activos
+    parser.add_argument('--tickers', nargs='+', default=None, 
+                        help='Lista específica de tickers a procesar (ej: AAPL MSFT ^GSPC)')
+    parser.add_argument('--indices', action='store_true', 
+                        help='Usar índices bursátiles principales (S&P 500, Dow Jones, NASDAQ, etc.)')
+    parser.add_argument('--stocks', action='store_true', 
+                        help='Usar acciones individuales principales (FAANG + tecnológicas)')
+    parser.add_argument('--etfs', action='store_true', 
+                        help='Usar ETFs principales (SPY, QQQ, VTI, etc.)')
+    parser.add_argument('--crypto', action='store_true', 
+                        help='Usar criptomonedas principales (BTC, ETH, etc.)')
+    parser.add_argument('--commodities', action='store_true', 
+                        help='Usar materias primas (oro, petróleo, etc.)')
+    
+    # Configuración de modelos
     parser.add_argument('--models', nargs='+', default=['lstm', 'gru', 'bilstm'], 
                         help='Lista de modelos a entrenar')
     parser.add_argument('--years', type=int, default=5, help='Años de datos históricos a descargar')
@@ -77,9 +299,12 @@ def main():
         
         args = parse_args()
         
-        # Tickers por defecto si no se especifican
-        if args.tickers is None:
-            args.tickers = DEFAULT_TICKERS
+        # Seleccionar tickers basándose en los argumentos
+        selected_tickers = select_tickers(args)
+        args.tickers = selected_tickers
+        
+        # Mostrar activos seleccionados
+        print_selected_assets(args.tickers)
         
         # Validar modelos
         invalid_models = [m for m in args.models if m not in AVAILABLE_MODELS]

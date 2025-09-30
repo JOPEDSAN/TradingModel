@@ -24,8 +24,12 @@ def parse_args():
     """Parsea los argumentos de línea de comandos."""
     parser = argparse.ArgumentParser(description='Validación del proyecto de predicción de inversiones')
     
-    parser.add_argument('--tickers', nargs='+', default=DEFAULT_TICKERS[:3], 
-                        help='Lista de tickers a validar')
+    parser.add_argument('--tickers', nargs='+', default=None, 
+                        help='Lista específica de tickers a validar')
+    parser.add_argument('--indices', action='store_true', 
+                        help='Validar índices bursátiles principales')
+    parser.add_argument('--stocks', action='store_true', 
+                        help='Validar acciones principales')
     parser.add_argument('--models', nargs='+', default=AVAILABLE_MODELS,
                         help='Lista de modelos a validar')
     parser.add_argument('--save-report', action='store_true',
@@ -40,9 +44,21 @@ def main():
     
     args = parse_args()
     
+    # Determinar tickers a validar
+    if args.tickers:
+        tickers_to_validate = args.tickers
+    elif args.indices:
+        tickers_to_validate = ["^GSPC", "^DJI", "^IXIC"]  # Principales índices
+    elif args.stocks:
+        tickers_to_validate = ["AAPL", "MSFT", "GOOGL"]  # Principales acciones
+    else:
+        tickers_to_validate = DEFAULT_TICKERS[:3]  # Por defecto
+    
+    print(f"🔍 Validando {len(tickers_to_validate)} activos: {', '.join(tickers_to_validate)}")
+    
     # Generar reporte de validación
     try:
-        report = generate_validation_report(args.tickers, args.models)
+        report = generate_validation_report(tickers_to_validate, args.models)
         
         # Mostrar reporte
         print_validation_report(report)
@@ -60,7 +76,7 @@ def main():
             return 1
         elif not report['summary']['ready_for_training']:
             print("\n⚠️  El proyecto no está completamente listo. Considera descargar datos primero.")
-            print("   Ejecuta: python main.py --download --tickers", ' '.join(args.tickers[:3]))
+            print("   Ejecuta: python main.py --download --tickers", ' '.join(tickers_to_validate))
             return 1
         else:
             print("\n✅ El proyecto está en buen estado!")
