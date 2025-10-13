@@ -1,12 +1,40 @@
 # Trading Model
 
+## ⚠️ **ADVERTENCIA LEGAL E IMPORTANTE** ⚠️
+
+> ### 🎓 **PROPÓSITO EXCLUSIVAMENTE ACADÉMICO Y EDUCATIVO**
+> 
+> **ESTE CÓDIGO ES ÚNICAMENTE PARA FINES ACADÉMICOS, EDUCATIVOS Y DE INVESTIGACIÓN.**
+> 
+> #### ❌ **LIMITACIONES DE USO:**
+> - **NO** está destinado para trading real o inversiones con dinero real
+> - **NO** constituye asesoramiento financiero de ningún tipo
+> - **NO** garantiza rentabilidad ni precisión en las predicciones
+> - **NO** debe usarse como única base para decisiones de inversión
+> 
+> #### 🚫 **EXENCIÓN DE RESPONSABILIDAD:**
+> - El autor **NO se hace responsable** de pérdidas financieras derivadas del uso de este código
+> - Los mercados financieros son **INHERENTEMENTE RIESGOSOS** y las pérdidas pueden ser totales
+> - Los modelos predictivos pueden **FALLAR** y generar predicciones incorrectas
+> - El rendimiento pasado **NO garantiza** resultados futuros
+> 
+> #### ✅ **USO APROPIADO:**
+> - Aprendizaje de técnicas de machine learning aplicadas a finanzas
+> - Investigación académica y educativa
+> - Comprensión de análisis técnico y fundamental
+> - Desarrollo de habilidades en ciencia de datos
+> 
+> **Al usar este código, acepta que lo hace bajo su propia responsabilidad y que entiende los riesgos asociados con cualquier actividad de trading o inversión.**
+
+---
+
 **Modelo para trading incluyendo datos macroeconómicos y análisis de noticias**
 
 - 👨‍💻 **Autor:** José Francisco Pedrero Sánchez
 - 📧 **Email:** jopedsan@ibv.org
 - 🔢 **Versión:** 0.1.0
 
-Este proyecto implementa un sistema avanzado de predicción para trading basado en datos históricos de Yahoo Finance, indicadores macroeconómicos y análisis de sentimiento de noticias, utilizando modelos de aprendizaje profundo con series temporales.
+Este proyecto implementa un sistema avanzado de predicción para trading basado en datos históricos de Yahoo Finance, indicadores macroeconómicos y análisis de sentimiento de noticias, utilizando modelos de aprendizaje profundo con series temporales **con fines puramente académicos y educativos**.
 
 ## 🚀 Mejoras Implementadas (v2.0)
 
@@ -106,6 +134,8 @@ ALPHAVANTAGE_API_KEY=tu_clave_api_alphavantage
 > Nota: Puedes obtener estas claves API gratuitas registrándote en sus respectivos sitios web.
 
 ## 🚀 Inicio Rápido
+
+> **🎓 RECORDATORIO ACADÉMICO:** Antes de continuar, asegúrate de haber leído y comprendido la **ADVERTENCIA LEGAL** al inicio de este documento. Este código es solo para fines educativos.
 
 ### Opción 1: Setup con Conda (Recomendado)
 
@@ -360,6 +390,8 @@ python main.py --predict --future-days 30
 
 ### 💡 Ejemplos Prácticos
 
+> **⚠️ RECORDATORIO:** Estos ejemplos son **ÚNICAMENTE** para aprendizaje y práctica. NO use los resultados para decisiones de inversión reales.
+
 #### **Análisis de Mercado General:**
 ```bash
 # Análisis completo de índices principales (recomendado para principiantes)
@@ -444,15 +476,63 @@ Las contribuciones son bienvenidas. Para cambios importantes, por favor contacta
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
-## ⚠️ Descargo de Responsabilidad
+## ⚠️ Descargo de Responsabilidad Completo
 
-Este proyecto es solo para fines educativos y de investigación. **No constituye asesoramiento financiero**. Invertir en mercados financieros conlleva riesgos, y las decisiones de inversión deben tomarse bajo tu propia responsabilidad y con el debido asesoramiento profesional.
+### 🎓 **Naturaleza Académica del Proyecto**
+Este proyecto es **EXCLUSIVAMENTE** para fines educativos, académicos y de investigación. Su propósito es demostrar la aplicación de técnicas de machine learning y ciencia de datos en el análisis de mercados financieros.
+
+### 🚫 **Limitaciones Legales Importantes**
+
+#### **NO es Asesoramiento Financiero:**
+- Este código **NO constituye** asesoramiento financiero, de inversión o de trading
+- **NO** debe considerarse como recomendación para comprar o vender valores
+- **NO** sustituye el consejo de un profesional financiero cualificado
+
+#### **Riesgos del Trading y las Inversiones:**
+- **RIESGO DE PÉRDIDA TOTAL:** Los mercados financieros pueden resultar en pérdidas del 100% del capital
+- **VOLATILIDAD EXTREMA:** Los precios pueden cambiar drásticamente sin previo aviso
+- **NO HAY GARANTÍAS:** El rendimiento pasado no garantiza resultados futuros
+- **MODELOS IMPERFECTOS:** Los algoritmos pueden fallar y generar predicciones incorrectas
+
+#### **Exención de Responsabilidad del Autor:**
+- **José Francisco Pedrero Sánchez** NO se hace responsable de:
+  - Pérdidas financieras derivadas del uso de este código
+  - Decisiones de inversión basadas en los resultados del modelo
+  - Errores en las predicciones o funcionamiento del software
+  - Cualquier daño directo o indirecto relacionado con el uso del código
+
+### ✅ **Uso Apropiado y Recomendado**
+- **Educación:** Aprender sobre machine learning aplicado a finanzas
+- **Investigación:** Desarrollar nuevas técnicas de análisis de mercados
+- **Formación:** Comprender indicadores técnicos y análisis fundamental
+- **Práctica:** Mejorar habilidades en programación y ciencia de datos
+
+### 📚 **Recomendaciones Profesionales**
+Si desea realizar inversiones reales:
+- Consulte con un **asesor financiero profesional**
+- Realice su propia **investigación independiente**
+- Considere su **tolerancia al riesgo** y situación financiera
+- **Diversifique** sus inversiones adecuadamente
+- **Nunca invierta** más de lo que puede permitirse perder
+
+### 🔒 **Aceptación de Términos**
+**Al descargar, usar o modificar este código, usted acepta que:**
+1. Comprende que es solo para propósitos académicos
+2. No lo utilizará para trading real sin asesoramiento profesional
+3. Asume toda responsabilidad por cualquier uso del código
+4. Entiende los riesgos asociados con las inversiones financieras
+5. Libera al autor de cualquier responsabilidad relacionada
+
+**RECUERDE: Los mercados financieros son complejos e impredecibles. Siempre busque asesoramiento profesional antes de tomar decisiones de inversión.**
 
 ---
 
-### 📞 Soporte y Contacto
+### 📞 Soporte y Contacto Académico
 
-Para preguntas, problemas o sugerencias sobre Trading Model v0.1.0:
+Para preguntas **académicas y educativas** sobre Trading Model v0.1.0:
 - 📧 **Email:** jopedsan@ib.org
-- 🐛 **Reportar bugs:** Contacta directamente por email
-- 💡 **Sugerencias:** Todas las ideas de mejora son bienvenidas
+- 🎓 **Propósito:** Solo consultas sobre aspectos técnicos, educativos y de implementación
+- 🐛 **Reportar bugs:** Errores técnicos en el código
+- 💡 **Sugerencias académicas:** Ideas para mejoras educativas del proyecto
+
+**NOTA:** NO se proporcionará asesoramiento financiero o de inversión a través de estos canales.
